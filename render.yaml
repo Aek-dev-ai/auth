@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: hwid-auth-server
+    runtime: python
+    buildCommand: ""
+    startCommand: python server.py
+    env: python
+    plan: free
+    region: oregon
