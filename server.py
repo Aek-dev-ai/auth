@@ -23,7 +23,7 @@ def verify():
     return jsonify({
         "success": True,
         "message": "تم التحقق بنجاح",
-        "expires": user["expires"]  # Include expiration date
+        "expires": user["expires"]  # Explicitly include expiration date
     })
 
 if __name__ == "__main__":
