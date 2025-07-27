@@ -20,7 +20,7 @@ def verify():
     expire_date = datetime.datetime.strptime(user["expires"], "%Y-%m-%d")
     if expire_date < datetime.datetime.now():
         return jsonify({"success": False, "message": "انتهت الصلاحية"})
-    return jsonify({"success": True, "token": f"TOKEN-{hwid[:8]}"})
+    return jsonify({"success": True, "message": "تم التحقق بنجاح"})  # Removed token
 
 if __name__ == "__main__":
     import os
