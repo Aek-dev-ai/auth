@@ -6,7 +6,7 @@ app = Flask(__name__)
 # قاعدة بيانات HWID
 hwid_db = {
     "e8f365275122603ef9ddca50c12018e6902e2c7e21cc369f1b4cfda53c6da1d8": {
-        "expires": "2025-08-31"
+        "expires": "2025-07-27"
     }
 }
 
