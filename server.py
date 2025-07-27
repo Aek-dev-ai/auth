@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import datetime
 
-app = Flask(name)
+app = Flask(__name__)
 
 # قاعدة بيانات HWID
 hwid_db = {
@@ -22,7 +22,7 @@ def verify():
         return jsonify({"success": False, "message": "انتهت الصلاحية"})
     return jsonify({"success": True, "token": f"TOKEN-{hwid[:8]}"})
 
-if name == "main":
+if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
