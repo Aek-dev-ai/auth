@@ -43,6 +43,9 @@ hwid_db = {
     },  
        "2a01520b17ea5b06bc560570eb600be85fab24ad34ce4acac48435d486b63538": {
         "expires": "2025-09-11"
+    },
+       "21d1f45f5faec4707fe895b2d1b98d0f425018f058bbe38bc793d6eeaadfd7a9": {
+        "expires": "2025-09-11"
     }
 }
 
@@ -66,6 +69,7 @@ if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
+
 
 
 
