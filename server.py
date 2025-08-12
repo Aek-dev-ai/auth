@@ -54,8 +54,12 @@ hwid_db = {
         "expires": "2025-09-11"
     },
       "d0e830a04bb599827ad00532301e24aa2d6a6bffe77afaafb314122ddc79711b": {
-        "expires": "2025-09-11"
-    }
+        "expires": "2025-09-12"
+    },
+     "434812b2954ed572c4f2de3da8233c63dc77dd932b395c39cd07ae6f3024a1ce": {
+        "expires": "2025-09-12"
+    },
+          
 }
 
 @app.route("/api/verify", methods=["POST"])
@@ -78,6 +82,7 @@ if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
+
 
 
 
