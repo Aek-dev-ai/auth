@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 # قاعدة بيانات HWID
 hwid_db = {
-    "34a37ee231d2b456967f731c824db3fef1bbbb42c0c866c7d4ee316ffdf737cc": {
+    "e8f365275122603ef9ddca50c12018e6902e2c7e21cc369f1b4cfda53c6da1d8": {
         "expires": "2025-09-27"
     },
         "5a491925a4737511524b7428ceaa9c015e7a238a7bfa2af2390fa615dc277c91": {
@@ -102,6 +102,7 @@ if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
+
 
 
 
