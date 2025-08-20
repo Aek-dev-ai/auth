@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Simplified database to store only hardware tokens and expiration dates
 hwid_db = {
     # Example token format: AST_[32_CHAR_HASH]
-    "AST_E8F365275122603EF9DDCA50C12018E6": {
+    "AST_B6CBF68BEE1C0886E1EB1A86BE3A21E7": {
         "expires": "2025-09-27"
     },
     # Add more tokens as needed
@@ -209,3 +209,4 @@ if __name__ == "__main__":
     print("="*50)
     
     app.run(host='0.0.0.0', port=port, debug=False)
+
