@@ -1,128 +1,211 @@
 from flask import Flask, request, jsonify
 import datetime
+import hashlib
+import json
 
 app = Flask(__name__)
 
-# قاعدة بيانات HWID
+# Simplified database to store only hardware tokens and expiration dates
 hwid_db = {
-    "e8f365275122603ef9ddca50c12018e6902e2c7e21cc369f1b4cfda53c6da1d8": {
+    # Example token format: AST_[32_CHAR_HASH]
+    "AST_E8F365275122603EF9DDCA50C12018E6": {
         "expires": "2025-09-27"
     },
-        "5a491925a4737511524b7428ceaa9c015e7a238a7bfa2af2390fa615dc277c91": {
-        "expires": "2025-09-09"
-    },
-        "d401dcf11fdc70069a79f0dcf6b92d488044bf25b07910d06d7d10ccf7802c0c": {
-        "expires": "2025-09-09"
-    },
-        "d508b5f7297f27d7ff0cb2e48bf053ee4c706a39bdd7410b0d416708ca20d486": {
-        "expires": "2025-09-09"
-    },
-        "1553f5a133eea27922c5ab7cef59ec14a439e119bbaaecf7ab5d94b59e16708a": {
-        "expires": "2025-09-09"
-    },
-        "9887cf12d902e331783056df967afe25f0c19ce5e79ee772bea9c820ca88b42a": {
-        "expires": "2025-09-09"
-    },
-        "8e20d083856e2707156b1106afdbe319ed0a060c9fb46a6038bb19e96781683d": {
-        "expires": "2025-09-10"
-    },
-        "a26ad2e2edd0d5434c50ff06d37dfdb8abbc50166cf769fe93c6e50531ea03c5": {
-        "expires": "2025-09-09"
-    },
-        "0430a19babd27fbbdc25f5897d90af66bb14a49caca86b1c0829b23f5f0ecb3d": {
-        "expires": "2025-09-09"
-    },
-        "a288ba73013e32b6ef977540bbeba5788d9c95fa2846a04efda80314c1f916e3": {
-        "expires": "2025-09-09"
-    },  
-        "5bfda8ef00c6f0814ff4ae9fee2d6888e1a01eaa9dd041e3cbfd0940eb7f2b7f": {
-        "expires": "2025-09-09"
-    },
-        "ce80f95f1e2d642797d89eaacf6bf87143de086861f1861b96a2a03fd1b9208a": {
-        "expires": "2025-09-09"
-    },  
-       "2a01520b17ea5b06bc560570eb600be85fab24ad34ce4acac48435d486b63538": {
-        "expires": "2025-09-11"
-    },
-       "dfca4e97d1bdb95446232816a8e8a9779f8f34bdf546d08fe4d06cab5a6250c3": {
-        "expires": "2025-09-11"
-    },
-      "6436ecb5c5deab50039ab1e0518e9c93e44a181452b58fa8b8e740670a3d6a31": {
-        "expires": "2025-09-11"
-    },
-      "4ea44ae598ef2dc0111d09ca64b8367b008752c7a5d9c58742a4fa7f6a368ec8": {
-        "expires": "2025-09-11"
-    },
-      "3b4fdef2969644f3383f1d9e8d4e643859008dc427dcde3a597cf6ce93f59983": {
-        "expires": "2025-09-12"
-    },
-     "434812b2954ed572c4f2de3da8233c63dc77dd932b395c39cd07ae6f3024a1ce": {
-        "expires": "2025-09-12"
-    },
-     "87607965c5e948f5f81f802603d022f7a155bd0e775080cbe305b3555d5d08b9": {
-        "expires": "2025-09-12"
-    },
-     "72f26e6ccf85d5cc33b106390f1c0d7018659f8107d756908265bf5f5c90e072": {
-        "expires": "2025-09-13"
-    },
-   "a84b2386f1332839f1577bd969f4ea3db3b29e356bd436551926399e65a386b4": {
-        "expires": "2025-09-13"
-    },
-    "2a921be276c10b87ad78244a5960f58079ef507eeb839d8636e293095976babe": {
-        "expires": "2025-09-13"
-    },
-    "771d4e7de40051e807fdcddc907133407787d1d0694048c9e466dd00e866b121": {
-        "expires": "2025-09-13"
-    },
-    "5e44cbc7dc47f9222ccda539a077fef1021084729bcb3ad62c8b5bc381d1bbbb": {
-        "expires": "2025-09-13"
-    },
-    "a9a939f34bcfcbab6804080cc9a3a0d07e3741b926c0fad8678726dfe10796fb": {
-        "expires": "2025-09-13"
+    # Add more tokens as needed
+    "AST_1A2B3C4D5E6F7890ABCDEF1234567890": {
+        "expires": "2025-12-31"
     }
 }
 
+def log_access_attempt(token, success, message=""):
+    """Log access attempts for monitoring"""
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    status = "SUCCESS" if success else "FAILED"
+    print(f"[{timestamp}] {status} - Token: {token[:20]}... - {message}")
+
 @app.route("/api/verify", methods=["POST"])
 def verify():
-    data = request.get_json()
-    hwid = data.get("hwid")
-    user = hwid_db.get(hwid)
-    if not user:
-        return jsonify({"success": False, "message": "HWID غير موجود"})
-    expire_date = datetime.datetime.strptime(user["expires"], "%Y-%m-%d")
-    if expire_date < datetime.datetime.now():
-        return jsonify({"success": False, "message": "انتهت الصلاحية"})
+    try:
+        data = request.get_json()
+        if not data:
+            log_access_attempt("UNKNOWN", False, "No JSON data provided")
+            return jsonify({
+                "success": False, 
+                "message": "بيانات غير صحيحة - لم يتم إرسال بيانات JSON"
+            }), 400
+
+        token = data.get("hwid")  # Client still sends as 'hwid' for compatibility
+        
+        if not token:
+            log_access_attempt("UNKNOWN", False, "No token provided")
+            return jsonify({
+                "success": False, 
+                "message": "لم يتم إرسال رمز التحقق"
+            }), 400
+
+        # Check if token exists in database
+        user = hwid_db.get(token)
+        if not user:
+            log_access_attempt(token, False, "Token not found in database")
+            return jsonify({
+                "success": False, 
+                "message": "رمز التحقق غير موجود في النظام"
+            }), 404
+
+        # Check expiration date
+        try:
+            expire_date = datetime.datetime.strptime(user["expires"], "%Y-%m-%d")
+            current_date = datetime.datetime.now()
+            
+            if expire_date < current_date:
+                log_access_attempt(token, False, "Token expired")
+                return jsonify({
+                    "success": False, 
+                    "message": f"انتهت صلاحية الرخصة في {user['expires']}"
+                }), 403
+                
+        except ValueError as e:
+            log_access_attempt(token, False, f"Invalid date format: {e}")
+            return jsonify({
+                "success": False, 
+                "message": "تاريخ انتهاء الصلاحية غير صحيح"
+            }), 500
+
+        # Calculate days until expiration
+        days_until_expiry = (expire_date - current_date).days
+        
+        log_access_attempt(token, True, f"Verification successful - {days_until_expiry} days remaining")
+        
+        return jsonify({
+            "success": True,
+            "message": "تم التحقق بنجاح",
+            "expires": user["expires"],
+            "days_remaining": days_until_expiry
+        }), 200
+
+    except Exception as e:
+        log_access_attempt("UNKNOWN", False, f"Server error: {str(e)}")
+        return jsonify({
+            "success": False, 
+            "message": "خطأ في الخادم"
+        }), 500
+
+@app.route("/api/register", methods=["POST"])
+def register():
+    """New endpoint to register hardware tokens"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({
+                "success": False, 
+                "message": "No data provided"
+            }), 400
+
+        token = data.get("token")
+        expires = data.get("expires", "2025-12-31")  # Default expiration
+        
+        if not token:
+            return jsonify({
+                "success": False, 
+                "message": "No token provided"
+            }), 400
+
+        # Check if token already exists
+        if token in hwid_db:
+            return jsonify({
+                "success": False, 
+                "message": "Token already registered"
+            }), 409
+
+        # Register new token
+        hwid_db[token] = {
+            "expires": expires
+        }
+
+        log_access_attempt(token, True, "New token registered")
+        
+        return jsonify({
+            "success": True,
+            "message": "Token registered successfully",
+            "expires": expires
+        }), 201
+
+    except Exception as e:
+        return jsonify({
+            "success": False, 
+            "message": f"Registration error: {str(e)}"
+        }), 500
+
+@app.route("/api/status", methods=["GET"])
+def status():
+    """Get server status and statistics"""
+    total_tokens = len(hwid_db)
+    active_tokens = 0
+    expired_tokens = 0
+    current_date = datetime.datetime.now()
+    
+    for token, user in hwid_db.items():
+        try:
+            expire_date = datetime.datetime.strptime(user["expires"], "%Y-%m-%d")
+            if expire_date >= current_date:
+                active_tokens += 1
+            else:
+                expired_tokens += 1
+        except:
+            expired_tokens += 1
+    
     return jsonify({
-        "success": True,
-        "message": "تم التحقق بنجاح",
-        "expires": user["expires"]  # Explicitly include expiration date
+        "server_status": "online",
+        "total_tokens": total_tokens,
+        "active_tokens": active_tokens,
+        "expired_tokens": expired_tokens,
+        "server_time": current_date.strftime("%Y-%m-%d %H:%M:%S")
     })
+
+@app.route("/api/health", methods=["GET"])
+def health():
+    """Simple health check endpoint"""
+    return jsonify({
+        "status": "healthy",
+        "timestamp": datetime.datetime.now().isoformat()
+    })
+
+# Error handlers
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        "success": False,
+        "message": "API endpoint not found"
+    }), 404
+
+@app.errorhandler(405)
+def method_not_allowed(error):
+    return jsonify({
+        "success": False,
+        "message": "Method not allowed"
+    }), 405
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({
+        "success": False,
+        "message": "Internal server error"
+    }), 500
 
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
+    print("="*50)
+    print("App'services Authentication Server")
+    print("="*50)
+    print(f"Server starting on port {port}")
+    print(f"Total registered tokens: {len(hwid_db)}")
+    print("Available endpoints:")
+    print("  POST /api/verify - Verify hardware token")
+    print("  POST /api/register - Register new token")
+    print("  GET  /api/status - Get server statistics")
+    print("  GET  /api/health - Health check")
+    print("="*50)
+    
+    app.run(host='0.0.0.0', port=port, debug=False)
