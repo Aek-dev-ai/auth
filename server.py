@@ -12,7 +12,7 @@ hwid_db = {
         "expires": "2025-09-27"
     },
     # Add more tokens as needed
-    " AST_9F6A520035FA310A9780C79BA7C530AE": {
+    "AST_9F6A520035FA310A9780C79BA7C530AE": {
         "expires": "2025-09-25"
     }
 }
@@ -209,6 +209,7 @@ if __name__ == "__main__":
     print("="*50)
     
     app.run(host='0.0.0.0', port=port, debug=False)
+
 
 
 
