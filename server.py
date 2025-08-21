@@ -32,7 +32,34 @@ hwid_db = {
     },
     "AST_7ECC446F3D97F13D_13_35E23C99": {
         "expires": "2025-09-25"
+    },
+
+    
+    "AST_C994AD5BBD9CA1B8_13_1300937A": {
+        "expires": "2025-09-25"
+    },
+"AST_F19D5C7958D9D5A7_13_5B39903A": {
+        "expires": "2025-09-25"
+    },
+"AST_DA7DF34B0E48759B_13_1CCBC529": {
+        "expires": "2025-09-25"
+    },
+"AST_C380214422169B73_13_D0C19E48": {
+        "expires": "2025-09-25"
+    },
+"AST_85A4F0152608E217_13_94C37170": {
+        "expires": "2025-09-25"
+    },
+"AST_D66FEE4F95C886C2_13_40B0C222": {
+        "expires": "2025-09-25"
+    },
+"AST_8452434A8FA57CD0_13_85543880": {
+        "expires": "2025-09-25"
+    },
+"AST_00EE09FFA6975407_13_F7E706F4": {
+        "expires": "2025-09-25"
     }
+
 }
 
 def log_access_attempt(token, success, message=""):
@@ -227,6 +254,7 @@ if __name__ == "__main__":
     print("="*50)
     
     app.run(host='0.0.0.0', port=port, debug=False)
+
 
 
 
