@@ -33,8 +33,6 @@ hwid_db = {
     "AST_7ECC446F3D97F13D_13_35E23C99": {
         "expires": "2025-09-25"
     },
-
-    
     "AST_C994AD5BBD9CA1B8_13_1300937A": {
         "expires": "2025-09-25"
     },
@@ -59,7 +57,6 @@ hwid_db = {
 "AST_00EE09FFA6975407_13_F7E706F4": {
         "expires": "2025-09-25"
     },
-
     "AST_FD506B66425086FF_13_4C39EDD5": {
         "expires": "2025-09-15"
     },
@@ -75,7 +72,7 @@ hwid_db = {
     "AST_F777633940E6F62F_13_40F3E50E": {
         "expires": "2025-09-15"
     },
-     " AST_43379DD851666584_13_19E8BCEA": {
+     "AST_43379DD851666584_13_19E8BCEA": {
         "expires": "2025-09-25"
     }
 
@@ -273,6 +270,7 @@ if __name__ == "__main__":
     print("="*50)
     
     app.run(host='0.0.0.0', port=port, debug=False)
+
 
 
 
