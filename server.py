@@ -69,7 +69,7 @@ hwid_db = {
 "AST_362522B01B7BE469_13_FEFF1593": {
         "expires": "2025-09-15"
     },
-    "AST_F777633940E6F62F_13_40F3E50E": {
+    "AST_99E759F06A9883F0_13_7AD2DAB4": {
         "expires": "2025-09-15"
     },
      "AST_43379DD851666584_13_19E8BCEA": {
@@ -270,6 +270,7 @@ if __name__ == "__main__":
     print("="*50)
     
     app.run(host='0.0.0.0', port=port, debug=False)
+
 
 
 
