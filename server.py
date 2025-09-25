@@ -9,7 +9,7 @@ app = Flask(__name__)
 hwid_db = {
     # Example token format: AST_[32_CHAR_HASH]
     "AST_288E88324EDE87BF_13_04DB2EDC": {
-        "expires": "2025-09-27"
+        "expires": "2025-08-27"
     },
     # Add more tokens as needed
     "AST_ACF7B32BE76F5819_13_60488A74": {
@@ -276,6 +276,7 @@ if __name__ == "__main__":
     print("="*50)
     
     app.run(host='0.0.0.0', port=port, debug=False)
+
 
 
 
