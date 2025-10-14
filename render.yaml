@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: hwid-auth-server
+    name: auth
     runtime: python
     buildCommand: ""
     startCommand: python server.py
